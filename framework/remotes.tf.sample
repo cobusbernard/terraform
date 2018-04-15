@@ -1,0 +1,14 @@
+# Allows creating the internal DNS values
+data "terraform_remote_state" "environment" {
+  backend   = "s3"
+  workspace = "${terraform.workspace}"
+
+  config {
+    bucket = "${var.terraform_state_bucket}"
+    key    = "environment/terraform.tfstate"
+    region = "${var.terraform_state_bucket_region}"
+
+    profile  = "<my-org>-master"
+    role_arn = "arn:aws:iam::${lookup(var.aws_account_ids, terraform.workspace)}:role/administrator"
+  }
+}
