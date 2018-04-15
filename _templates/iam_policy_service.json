@@ -1,0 +1,84 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+            "Action": [
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:DeleteLifecycleHook",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:PutLifecycleHook",
+                "autoscaling:RecordLifecycleActionHeartbeat",
+                "codedeploy:*",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:BatchGetImage",
+                "ecr:DescribeRepositories",
+                "ecr:GetAuthorizationToken",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:GetManifest",
+                "ecr:ListImages",
+                "ecr:CompleteLayerUpload",
+                "ecr:GetRepositoryPolicy",
+                "ecr:InitiateLayerUpload",
+                "tag:GetTags",
+                "tag:GetResources",
+                "sns:Publish"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "s3:List*",
+                "s3:Get*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<my-org>-build-artifacts",
+                "arn:aws:s3:::<my-org>-bootstrap-scripts"
+            ],
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "s3:Get*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<my-org>-build-artifacts/*",
+                "arn:aws:s3:::<my-org>-bootstrap-scripts/*"
+            ],
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "logs:Create*",
+                "logs:PutLogEvents"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Sid": "GetConfigs",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeParameters",
+                "ssm:GetParameter",
+                "ssm:GetParameters"
+            ],
+            "Resource": [
+                "arn:aws:ssm:${aws_region}:${aws_account_id}:parameter/${service-name}/*",
+                "arn:aws:ssm:${aws_region}:${aws_account_id}:parameter/<my-org>-*"
+            ]
+        },
+        {
+            "Sid": "DecryptConfigs",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Decrypt"
+            ],
+            "Resource": [
+                "${kms_parameter_store_arn}"
+            ]
+        }
+    ]
+}
